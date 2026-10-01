@@ -21,13 +21,28 @@ submissions/manideep667320/
 ├── eval-report.md             ← Held-out 50-unit eval results, 2-labeller agreement, FP/FN breakdown
 ├── contract/
 │   └── prep_evidence_contract.json ← Cross-pod evidence contract for Recovery Manager
-└── agent/                     ← Production headless agent core
-    ├── config.py              ← Centralized environment configuration
-    ├── tenancy.py             ← PostgreSQL Row-Level Security & tenant scoping
-    ├── fail_open.py           ← Fail-open decorator (status=pending_review)
-    ├── amazon_rules.py        ← Deterministic Amazon FBA prep rules engine
-    ├── vlm_client.py          ← Batched single-call multimodal VLM client
-    └── runner.py              ← CLI test runner executing over fixture captures
+├── agent/                     ← Production headless agent core
+│   ├── config.py              ← Centralized environment configuration
+│   ├── schemas.py             ← Pydantic schemas (6 checks, bounding boxes, overrides)
+│   ├── tenancy.py             ← PostgreSQL Row-Level Security & tenant scoping
+│   ├── fail_open.py           ← Fail-open decorator (status=pending_review)
+│   ├── amazon_rules.py        ← Deterministic Amazon FBA prep rules engine
+│   ├── vlm_client.py          ← Batched single-call multimodal VLM client
+│   └── runner.py              ← CLI test runner executing over fixture captures
+└── web/                       ← Production Dual-Mode Web Application
+    ├── server.py              ← FastAPI server (RLS middleware, /api/inspect, /api/records, /api/tenancy-test)
+    ├── static/                ← Compiled production web bundle & assets (HTML, CSS, JS)
+    └── frontend/              ← React 18 + Vite + TypeScript + Tailwind CSS application
+        ├── src/App.tsx        ← Dual-mode controller (Station Bench ⇄ Manager Defense)
+        ├── src/components/    ← Tactile industrial components:
+        │   ├── VisualBench.tsx      ← 3-angle photographic inspection with physical defect callouts
+        │   ├── ChecksPanel.tsx      ← 6 authoritative Amazon FBA compliance gates
+        │   ├── ManagerDashboard.tsx ← Margin cockpit, active shipments, Amazon dispute rebuttals
+        │   ├── Header.tsx           ← High-contrast top bar with mode switcher & RLS controls
+        │   ├── KpiBar.tsx           ← Compact shift performance telemetry
+        │   ├── OverrideModal.tsx    ← Honesty-rule operator override with mandatory reason
+        │   └── RecoveryContractModal.tsx ← Step 5 cryptographic dispute pack drawer
+        └── package.json       ← Node tooling dependencies
 ```
 
 ---
@@ -38,16 +53,35 @@ submissions/manideep667320/
 |---|---|:---:|---|
 | **1** | Customer Letter, PR/FAQ, One-Pager | ☑ Completed | [01-customer-letter.md](01-customer-letter.md), [02-prfaq.md](02-prfaq.md), [03-one-pager.md](03-one-pager.md) |
 | **2** | CLAUDE.md (Durable Constraints) | ☑ Completed | [CLAUDE.md](CLAUDE.md) |
-| **3** | Headless Agent on Fixtures | ☑ Completed | [agent/](agent/) (Passed 5/5 unit tests) |
-
-| **4** | Eval Report (50 Held-Out Units) | ☑ Completed | [eval-report.md](eval-report.md) (0.0% False PASS) |
-
-| **5** | Evidence Record Page & Operator UI | ☑ Completed | [web/](web/) (FastAPI + Packing Station UI) |
-
+| **3** | Headless Agent on Fixtures | ☑ Completed | [agent/](agent/) (Passed 5/5 unit tests in 0.27s) |
+| **4** | Eval Report (50 Held-Out Units) | ☑ Completed | [eval-report.md](eval-report.md) (0.0% False PASS rate) |
+| **5** | Evidence Record Page & Operator UI | ☑ Completed | [web/](web/) (Dual-Mode: Station Bench + Manager Defense) |
 | **6** | Cross-Pod Contract (Recovery Manager) | ☑ Completed | [contract/prep_evidence_contract.json](contract/prep_evidence_contract.json) |
+
+---
+
+## Local Execution & Verification
+
+### 1. Run Headless Agent Test Suite
+```bash
+python -m pytest submissions/manideep667320/tests/test_agent.py -v
+```
+
+### 2. Run 50-Unit Held-Out Evaluation
+```bash
+python submissions/manideep667320/eval/run_eval.py
+```
+
+### 3. Launch Operator Packing Station
+```bash
+# Start FastAPI backend & production React station
+python -m uvicorn submissions.manideep667320.web.server:app --port 8000 --host 127.0.0.1
+# Open in browser: http://127.0.0.1:8000
+```
 
 ---
 
 ## Kill Condition
 
 > **If the agent's False PASS rate exceeds 1.5% on authoritative FBA requirements, or if the batched inference cost exceeds $0.02 per unit inspected (eroding more than 5% of the minimum $0.40/unit prep fee), the system is killed.**
+

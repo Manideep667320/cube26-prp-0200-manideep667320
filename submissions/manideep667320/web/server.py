@@ -9,7 +9,7 @@ if str(_pkg_root) not in sys.path:
     sys.path.insert(0, str(_pkg_root))
 
 from fastapi import FastAPI, Header, HTTPException, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -24,7 +24,24 @@ app = FastAPI(title="Prep Manager Web Station", version="1.0.0")
 # Mount static files directory
 static_dir = Path(__file__).resolve().parent / "static"
 static_dir.mkdir(parents=True, exist_ok=True)
+assets_dir = static_dir / "assets"
+if assets_dir.exists():
+    app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="assets")
 app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+
+
+@app.get("/api/health")
+async def health():
+    return {"status": "ok", "app": "PrepFlow Enterprise", "version": "v2.4"}
+
+
+@app.get("/{image_name}.jpg")
+async def serve_static_image(image_name: str):
+    img_path = static_dir / f"{image_name}.jpg"
+    if img_path.exists():
+        return FileResponse(img_path)
+    raise HTTPException(status_code=404, detail="Image not found")
+
 
 
 class InspectRequest(BaseModel):
@@ -122,8 +139,10 @@ async def run_tenancy_test():
 
 
 @app.get("/", response_class=HTMLResponse)
+@app.get("/overview", response_class=HTMLResponse)
+@app.get("/landing", response_class=HTMLResponse)
 async def serve_dashboard():
-    """Serve the operator packing station UI."""
+    """Serve the operator packing station UI or standalone landing page."""
     index_file = static_dir / "index.html"
     if not index_file.exists():
         return HTMLResponse("<h1>Prep Manager Operator Dashboard Loading...</h1>")

@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#f8fafc] text-slate-800 antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* Clean Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Tactile push */
+.btn-tactile {
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-tactile:active {
+  transform: scale(0.98);
+}
+
+/* Computer Vision Laser Scan Line */
+@keyframes scan-line {
+  0% {
+    top: 8%;
+    opacity: 0.2;
+  }
+  50% {
+    top: 88%;
+    opacity: 0.85;
+  }
+  100% {
+    top: 8%;
+    opacity: 0.2;
+  }
+}
+
+.animate-scan-line {
+  animation: scan-line 3.2s ease-in-out infinite;
+}
+
+/* Gentle Float for Feature Callouts */
+@keyframes gentle-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-float {
+  animation: gentle-float 4s ease-in-out infinite;
+}
+
+/* Subtle Grid Background Pattern */
+.bg-grid-pattern {
+  background-size: 28px 28px;
+  background-image: 
+    linear-gradient(to right, rgba(226, 232, 240, 0.6) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(226, 232, 240, 0.6) 1px, transparent 1px);
+}
+
+
