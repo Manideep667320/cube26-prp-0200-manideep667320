@@ -13,13 +13,31 @@ import { ShieldCheck, CheckCircle2 } from 'lucide-react';
 
 export const App: React.FC = () => {
   // Determine if initial route is the standalone landing page or dual mode app
+  // Landing page is now the DEFAULT starting page on '/' and all initial visits
   const isLandingRoute = () => {
-    if (typeof window === 'undefined') return false;
-    return (
-      window.location.pathname === '/landing' ||
-      window.location.pathname === '/overview' ||
-      window.location.search.includes('view=landing')
-    );
+    if (typeof window === 'undefined') return true;
+    const path = window.location.pathname;
+    const search = window.location.search;
+    // Only go directly to app if explicitly requested via /app, /station, /bench, or query param
+    if (
+      path === '/app' ||
+      path === '/station' ||
+      path === '/bench' ||
+      search.includes('view=station') ||
+      search.includes('view=app') ||
+      search.includes('view=bench')
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  const getInitialStationMode = (): 'station' | 'manager' => {
+    if (typeof window === 'undefined') return 'station';
+    if (window.location.search.includes('mode=manager') || window.location.search.includes('view=manager')) {
+      return 'manager';
+    }
+    return 'station';
   };
 
   const [currentPage, setCurrentPage] = useState<'landing' | 'app'>(
@@ -27,7 +45,7 @@ export const App: React.FC = () => {
   );
 
   // Dual mode strictly between 'station' (Packing Bench) and 'manager' (Disputes & Claims)
-  const [stationMode, setStationMode] = useState<'station' | 'manager'>('station');
+  const [stationMode, setStationMode] = useState<'station' | 'manager'>(getInitialStationMode);
   const [tenant, setTenant] = useState<TenantOrg>('org_demo_alpha');
   const [scenarioKey, setScenarioKey] = useState<string>('UNIT-0002');
   const [scenarios, setScenarios] = useState(INITIAL_SCENARIOS);
@@ -51,7 +69,15 @@ export const App: React.FC = () => {
   // Listen to browser Back/Forward navigation
   useEffect(() => {
     const handlePopState = () => {
-      setCurrentPage(isLandingRoute() ? 'landing' : 'app');
+      const isLanding = isLandingRoute();
+      setCurrentPage(isLanding ? 'landing' : 'app');
+      if (!isLanding) {
+        if (window.location.search.includes('mode=manager') || window.location.search.includes('view=manager')) {
+          setStationMode('manager');
+        } else {
+          setStationMode('station');
+        }
+      }
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -59,17 +85,16 @@ export const App: React.FC = () => {
 
   const navigateToLanding = () => {
     setCurrentPage('landing');
-    if (window.location.pathname !== '/overview') {
-      window.history.pushState({}, '', '/overview');
+    if (window.location.pathname !== '/' && window.location.pathname !== '/overview') {
+      window.history.pushState({}, '', '/');
     }
   };
 
   const navigateToStationApp = (mode: 'station' | 'manager' = 'station') => {
     setCurrentPage('app');
     setStationMode(mode);
-    if (window.location.pathname !== '/') {
-      window.history.pushState({}, '', '/');
-    }
+    const targetUrl = mode === 'manager' ? '/station?mode=manager' : '/station';
+    window.history.pushState({}, '', targetUrl);
   };
 
   const showToast = (msg: string) => {

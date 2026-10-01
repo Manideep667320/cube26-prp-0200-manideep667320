@@ -141,8 +141,11 @@ async def run_tenancy_test():
 @app.get("/", response_class=HTMLResponse)
 @app.get("/overview", response_class=HTMLResponse)
 @app.get("/landing", response_class=HTMLResponse)
+@app.get("/station", response_class=HTMLResponse)
+@app.get("/app", response_class=HTMLResponse)
+@app.get("/bench", response_class=HTMLResponse)
 async def serve_dashboard():
-    """Serve the operator packing station UI or standalone landing page."""
+    """Serve the landing page or operator packing station UI."""
     index_file = static_dir / "index.html"
     if not index_file.exists():
         return HTMLResponse("<h1>Prep Manager Operator Dashboard Loading...</h1>")

@@ -65,10 +65,10 @@ export const Header: React.FC<HeaderProps> = ({
           {onOpenLandingPage && (
             <button
               onClick={onOpenLandingPage}
-              className="hidden lg:flex items-center gap-1 text-[11px] font-mono text-slate-500 hover:text-blue-600 bg-slate-50 hover:bg-blue-50/60 border border-slate-200 px-2 py-1 rounded-md transition-colors"
-              title="Open standalone product overview landing page"
+              className="flex items-center gap-1.5 text-xs font-mono text-slate-600 hover:text-blue-700 bg-slate-100 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+              title="Return to System Overview Landing Page"
             >
-              <span>&larr; System Landing Page</span>
+              <span>&larr; System Overview</span>
             </button>
           )}
         </div>
