@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PrepManagerEvidenceRecord",
+  "description": "Standard cross-pod evidence contract exported by Prep Manager (Step 2) and consumed by Recovery Manager (Step 5) to refute Amazon FBA unplanned prep defect fee chargebacks.",
+  "type": "object",
+  "required": [
+    "record_id",
+    "unit_id",
+    "org_id",
+    "work_order_id",
+    "fba_shipment_id",
+    "sku",
+    "asin",
+    "fnsku",
+    "prep_price_usd",
+    "overall_verdict",
+    "checks",
+    "photo_refs",
+    "operator_id",
+    "captured_at"
+  ],
+  "properties": {
+    "record_id": {
+      "type": "string",
+      "pattern": "^PRP-[0-9]{4,}$",
+      "description": "Unique identifier for this prep compliance record. Must begin with PRP-."
+    },
+    "unit_id": {
+      "type": "string",
+      "pattern": "^UNIT-[0-9]{4,}$",
+      "description": "Global join key shared across all 5 buildathon repositories (UNIT-0001 through UNIT-0100)."
+    },
+    "org_id": {
+      "type": "string",
+      "enum": ["org_demo_alpha", "org_demo_bravo"],
+      "description": "Tenant organization identifier for Row-Level Security isolation."
+    },
+    "work_order_id": {
+      "type": "string",
+      "description": "Prep center work order reference stating expected prep operations."
+    },
+    "fba_shipment_id": {
+      "type": "string",
+      "description": "Amazon Inbound FBA shipment ID associated with this unit."
+    },
+    "sku": {
+      "type": "string",
+      "description": "Merchant stock keeping unit."
+    },
+    "asin": {
+      "type": "string",
+      "description": "Amazon Standard Identification Number."
+    },
+    "fnsku": {
+      "type": "string",
+      "description": "Fulfillment Network Stock Keeping Unit barcode value."
+    },
+    "prep_price_usd": {
+      "type": "number",
+      "minimum": 0.40,
+      "maximum": 1.10,
+      "description": "Fee charged by the prep center for preparing this unit in USD."
+    },
+    "overall_verdict": {
+      "type": "string",
+      "enum": ["PASS", "FAIL", "UNCERTAIN", "pending_review"],
+      "description": "Aggregated compliance verdict across all applicable requirements."
+    },
+    "checks": {
+      "type": "object",
+      "required": [
+        "polybag_present_sealed",
+        "suffocation_warning",
+        "fnsku_label_placement",
+        "original_barcode_covered",
+        "expiry_date",
+        "handling_marks"
+      ],
+      "properties": {
+        "polybag_present_sealed": {
+          "type": "string",
+          "enum": ["yes", "not_sealed", "missing", "uncertain", "not_required"]
+        },
+        "suffocation_warning": {
+          "type": "string",
+          "enum": ["legible", "obscured_by_fold", "missing", "uncertain", "not_required"]
+        },
+        "fnsku_label_placement": {
+          "type": "string",
+          "enum": ["flat", "on_seam", "on_curve", "on_edge", "missing", "uncertain"]
+        },
+        "original_barcode_covered": {
+          "type": "string",
+          "enum": ["yes", "no", "uncertain"]
+        },
+        "expiry_date": {
+          "type": "string",
+          "enum": ["legible", "illegible_after_wrap", "uncertain", "not_required"]
+        },
+        "handling_marks": {
+          "type": "string",
+          "enum": ["all_present", "some_missing", "uncertain", "not_required"]
+        }
+      }
+    },
+    "evidence_grounding": {
+      "type": "array",
+      "description": "Bounding box coordinates and confidence scores grounding each observation.",
+      "items": {
+        "type": "object",
+        "required": ["check_id", "photo_ref", "bbox", "confidence", "observation_text"],
+        "properties": {
+          "check_id": { "type": "string" },
+          "photo_ref": { "type": "string" },
+          "bbox": {
+            "type": "array",
+            "items": { "type": "number" },
+            "minItems": 4,
+            "maxItems": 4,
+            "description": "[ymin, xmin, ymax, xmax] normalized coordinates (0 to 1000)."
+          },
+          "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "observation_text": { "type": "string" }
+        }
+      }
+    },
+    "operator_override": {
+      "type": ["object", "null"],
+      "description": "Recorded if an operator manually overruled the AI verdict.",
+      "properties": {
+        "original_verdict": { "type": "string" },
+        "new_verdict": { "type": "string" },
+        "operator_id": { "type": "string" },
+        "reason": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      }
+    },
+    "photo_refs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Array of SHA-256 hashed, tenant-scoped paths to captured images."
+    },
+    "operator_id": {
+      "type": "string",
+      "description": "Badge ID of the warehouse operator at the packing station."
+    },
+    "captured_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC ISO-8601 timestamp when photos were captured."
+    }
+  }
+}

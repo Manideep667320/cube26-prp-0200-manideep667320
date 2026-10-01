@@ -1,0 +1,302 @@
+{
+  "PRP-0002": {
+    "record_id": "PRP-0002",
+    "unit_id": "UNIT-0002",
+    "org_id": "org_demo_alpha",
+    "work_order_id": "WO-3000",
+    "fba_shipment_id": "FBA-DUMMY-100",
+    "sku": "SKU-SAMPLE",
+    "asin": "B0DUMMY001",
+    "fnsku": "X00DUMMY001",
+    "prep_price_usd": 0.75,
+    "overall_verdict": "PASS",
+    "checks": {
+      "polybag_present_sealed": "yes",
+      "suffocation_warning": "legible",
+      "fnsku_label_placement": "flat",
+      "original_barcode_covered": "yes",
+      "expiry_date": "not_required",
+      "handling_marks": "not_required"
+    },
+    "evidence_grounding": [
+      {
+        "check_id": "polybag",
+        "photo_ref": "fixtures/alpha.jpg",
+        "bbox": [
+          80,
+          80,
+          920,
+          920
+        ],
+        "confidence": 0.97,
+        "observation_text": "Polybag fully encloses unit and is securely heat-sealed/taped."
+      },
+      {
+        "check_id": "suffocation",
+        "photo_ref": "fixtures/alpha.jpg",
+        "bbox": [
+          180,
+          220,
+          360,
+          720
+        ],
+        "confidence": 0.94,
+        "observation_text": "Suffocation warning is printed/labeled in compliant font size and fully legible."
+      },
+      {
+        "check_id": "fnsku",
+        "photo_ref": "fixtures/alpha.jpg",
+        "bbox": [
+          620,
+          310,
+          840,
+          760
+        ],
+        "confidence": 0.98,
+        "observation_text": "FNSKU barcode is placed flat on package surface with required quiet zone."
+      },
+      {
+        "check_id": "barcode_coverage",
+        "photo_ref": "fixtures/alpha.jpg",
+        "bbox": [
+          620,
+          310,
+          840,
+          760
+        ],
+        "confidence": 0.95,
+        "observation_text": "Original manufacturer UPC/EAN barcode is completely obscured."
+      },
+      {
+        "check_id": "expiry",
+        "photo_ref": "fixtures/alpha.jpg",
+        "bbox": [
+          720,
+          710,
+          860,
+          910
+        ],
+        "confidence": 0.92,
+        "observation_text": "Product is non-perishable; expiry date verification not required."
+      },
+      {
+        "check_id": "handling",
+        "photo_ref": "fixtures/alpha.jpg",
+        "bbox": [
+          140,
+          140,
+          310,
+          310
+        ],
+        "confidence": 0.94,
+        "observation_text": "Special handling labels not mandated for this commodity type."
+      }
+    ],
+    "operator_override": null,
+    "photo_refs": [
+      "fixtures/alpha.jpg"
+    ],
+    "operator_id": "op_amira",
+    "captured_at": "2026-10-01T14:13:31.176710+00:00"
+  },
+  "PRP-0003": {
+    "record_id": "PRP-0003",
+    "unit_id": "UNIT-0003",
+    "org_id": "org_demo_bravo",
+    "work_order_id": "WO-3000",
+    "fba_shipment_id": "FBA-DUMMY-100",
+    "sku": "SKU-SAMPLE",
+    "asin": "B0DUMMY001",
+    "fnsku": "X00DUMMY001",
+    "prep_price_usd": 0.75,
+    "overall_verdict": "PASS",
+    "checks": {
+      "polybag_present_sealed": "yes",
+      "suffocation_warning": "legible",
+      "fnsku_label_placement": "flat",
+      "original_barcode_covered": "yes",
+      "expiry_date": "not_required",
+      "handling_marks": "not_required"
+    },
+    "evidence_grounding": [
+      {
+        "check_id": "polybag",
+        "photo_ref": "fixtures/bravo.jpg",
+        "bbox": [
+          80,
+          80,
+          920,
+          920
+        ],
+        "confidence": 0.97,
+        "observation_text": "Polybag fully encloses unit and is securely heat-sealed/taped."
+      },
+      {
+        "check_id": "suffocation",
+        "photo_ref": "fixtures/bravo.jpg",
+        "bbox": [
+          180,
+          220,
+          360,
+          720
+        ],
+        "confidence": 0.94,
+        "observation_text": "Suffocation warning is printed/labeled in compliant font size and fully legible."
+      },
+      {
+        "check_id": "fnsku",
+        "photo_ref": "fixtures/bravo.jpg",
+        "bbox": [
+          620,
+          310,
+          840,
+          760
+        ],
+        "confidence": 0.98,
+        "observation_text": "FNSKU barcode is placed flat on package surface with required quiet zone."
+      },
+      {
+        "check_id": "barcode_coverage",
+        "photo_ref": "fixtures/bravo.jpg",
+        "bbox": [
+          620,
+          310,
+          840,
+          760
+        ],
+        "confidence": 0.95,
+        "observation_text": "Original manufacturer UPC/EAN barcode is completely obscured."
+      },
+      {
+        "check_id": "expiry",
+        "photo_ref": "fixtures/bravo.jpg",
+        "bbox": [
+          720,
+          710,
+          860,
+          910
+        ],
+        "confidence": 0.92,
+        "observation_text": "Product is non-perishable; expiry date verification not required."
+      },
+      {
+        "check_id": "handling",
+        "photo_ref": "fixtures/bravo.jpg",
+        "bbox": [
+          140,
+          140,
+          310,
+          310
+        ],
+        "confidence": 0.94,
+        "observation_text": "Special handling labels not mandated for this commodity type."
+      }
+    ],
+    "operator_override": null,
+    "photo_refs": [
+      "fixtures/bravo.jpg"
+    ],
+    "operator_id": "op_amira",
+    "captured_at": "2026-10-01T14:13:31.179710+00:00"
+  },
+  "PRP-0004": {
+    "record_id": "PRP-0004",
+    "unit_id": "UNIT-0004",
+    "org_id": "org_demo_alpha",
+    "work_order_id": "WO-3000",
+    "fba_shipment_id": "FBA-DUMMY-100",
+    "sku": "SKU-SAMPLE",
+    "asin": "B0DUMMY001",
+    "fnsku": "X00DUMMY001",
+    "prep_price_usd": 0.75,
+    "overall_verdict": "FAIL",
+    "checks": {
+      "polybag_present_sealed": "yes",
+      "suffocation_warning": "legible",
+      "fnsku_label_placement": "on_seam",
+      "original_barcode_covered": "yes",
+      "expiry_date": "not_required",
+      "handling_marks": "not_required"
+    },
+    "evidence_grounding": [
+      {
+        "check_id": "polybag",
+        "photo_ref": "fixtures/prep/seam.jpg",
+        "bbox": [
+          80,
+          80,
+          920,
+          920
+        ],
+        "confidence": 0.97,
+        "observation_text": "Polybag fully encloses unit and is securely heat-sealed/taped."
+      },
+      {
+        "check_id": "suffocation",
+        "photo_ref": "fixtures/prep/seam.jpg",
+        "bbox": [
+          180,
+          220,
+          360,
+          720
+        ],
+        "confidence": 0.94,
+        "observation_text": "Suffocation warning is printed/labeled in compliant font size and fully legible."
+      },
+      {
+        "check_id": "fnsku",
+        "photo_ref": "fixtures/prep/seam.jpg",
+        "bbox": [
+          620,
+          310,
+          840,
+          760
+        ],
+        "confidence": 0.98,
+        "observation_text": "Amazon Labeling Violation: FNSKU label placed on on seam."
+      },
+      {
+        "check_id": "barcode_coverage",
+        "photo_ref": "fixtures/prep/seam.jpg",
+        "bbox": [
+          620,
+          310,
+          840,
+          760
+        ],
+        "confidence": 0.95,
+        "observation_text": "Original manufacturer UPC/EAN barcode is completely obscured."
+      },
+      {
+        "check_id": "expiry",
+        "photo_ref": "fixtures/prep/seam.jpg",
+        "bbox": [
+          720,
+          710,
+          860,
+          910
+        ],
+        "confidence": 0.92,
+        "observation_text": "Product is non-perishable; expiry date verification not required."
+      },
+      {
+        "check_id": "handling",
+        "photo_ref": "fixtures/prep/seam.jpg",
+        "bbox": [
+          140,
+          140,
+          310,
+          310
+        ],
+        "confidence": 0.94,
+        "observation_text": "Special handling labels not mandated for this commodity type."
+      }
+    ],
+    "operator_override": null,
+    "photo_refs": [
+      "fixtures/prep/seam.jpg"
+    ],
+    "operator_id": "op_amira",
+    "captured_at": "2026-10-01T14:13:31.208983+00:00"
+  }
+}
