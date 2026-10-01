@@ -1,0 +1,13 @@
+{
+  "name": "cube26-prepflow",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "npm --prefix submissions/manideep667320/web/frontend run dev",
+    "build": "npm --prefix submissions/manideep667320/web/frontend run build && node -e \"require('fs').cpSync('submissions/manideep667320/web/frontend/dist', 'dist', {recursive:true, force:true})\"",
+    "preview": "npm --prefix submissions/manideep667320/web/frontend run preview"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}
