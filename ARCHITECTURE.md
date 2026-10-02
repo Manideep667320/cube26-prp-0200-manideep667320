@@ -93,44 +93,44 @@ PrepFlow strictly enforces the 5 competition engineering rules across all code m
 
 ```mermaid
 flowchart TD
-    subgraph Station Bench [Packaging Bench Workstation]
-        CAM[Multi-Angle Overhead Cameras: Front, Back, Label] --> INGEST[FastAPI Inspection Endpoint /api/inspect]
-        SCAN[FNSKU / ASIN Barcode Scanner] --> INGEST
+    subgraph Station_Bench ["Packaging Bench Workstation"]
+        CAM["Multi-Angle Overhead Cameras: Front, Back, Label"] --> INGEST["FastAPI Inspection Endpoint /api/inspect"]
+        SCAN["FNSKU / ASIN Barcode Scanner"] --> INGEST
     end
 
-    subgraph Security & Tenancy Layer [Rule 1: Multi-Tenant RLS]
-        INGEST --> RLS[RLSTenancyManager: enforce_tenant_context]
-        RLS --> SECURE_STORE[(Tenant Partitioned Storage /storage/{org_id}/{sha256}.jpg)]
+    subgraph Security_Tenancy ["Security & Tenancy Layer (Rule 1: Multi-Tenant RLS)"]
+        INGEST --> RLS["RLSTenancyManager: enforce_tenant_context"]
+        RLS --> SECURE_STORE[("Tenant Partitioned Storage: /storage/:org_id/:sha256.jpg")]
     end
 
-    subgraph Batched Inference & Resilience [Rules 2 & 3]
-        RLS --> BATCH_VLM[BatchedVLMClient: Single-Call 6-Check Vision Grounding]
-        BATCH_VLM -.->|Timeout > 800ms / Network Error| FAIL_OPEN[@fail_open_boundary: Buffer Locally & status=pending_review]
-        BATCH_VLM -->|Success| GROUNDING[Visual Grounding: 2D Bounding Boxes & Observations]
+    subgraph Batched_Inference ["Batched Inference & Resilience (Rules 2 & 3)"]
+        RLS --> BATCH_VLM["BatchedVLMClient: Single-Call 6-Check Vision Grounding"]
+        BATCH_VLM -.->|"Timeout > 800ms / Network Error"| FAIL_OPEN["fail_open_boundary: Buffer Locally & status=pending_review"]
+        BATCH_VLM -->|"Success"| GROUNDING["Visual Grounding: 2D Bounding Boxes & Observations"]
     end
 
-    subgraph Deterministic Rules Engine [Rules 4 & 5]
-        GROUNDING --> RULES[Authoritative Amazon Rules Engine: Rules 101–601]
-        RULES --> AGGREGATE{aggregate_compliance}
-        AGGREGATE -->|Fully Compliant| PASS[PASS]
-        AGGREGATE -->|Defect Detected| FAIL[FAIL]
-        AGGREGATE -->|Occluded / Glare / Blur| UNCERTAIN[UNCERTAIN: First-Class Tri-State]
+    subgraph Rules_Engine ["Deterministic Rules Engine (Rules 4 & 5)"]
+        GROUNDING --> RULES["Authoritative Amazon Rules Engine: Rules 101–601"]
+        RULES --> AGGREGATE{"aggregate_compliance"}
+        AGGREGATE -->|"Fully Compliant"| PASS["PASS"]
+        AGGREGATE -->|"Defect Detected"| FAIL["FAIL"]
+        AGGREGATE -->|"Occluded / Glare / Blur"| UNCERTAIN["UNCERTAIN: First-Class Tri-State"]
     end
 
-    subgraph Evidence Ledger & Interoperability [Step 5 Interoperability]
-        PASS --> LEDGER[Deterministic Evidence Record PRP-XXXX]
+    subgraph Ledger_Interoperability ["Evidence Ledger & Step 5 Interoperability"]
+        PASS --> LEDGER["Deterministic Evidence Record PRP-XXXX"]
         FAIL --> LEDGER
         UNCERTAIN --> LEDGER
         FAIL_OPEN --> LEDGER
-        LEDGER --> DB[(PostgreSQL RLS Database)]
-        LEDGER --> CONTRACT[Cross-Pod Contract: prep_evidence_contract.json]
-        CONTRACT --> STEP5[Step 5: Recovery Manager Dispute Claim Engine]
+        LEDGER --> DB[("PostgreSQL RLS Database")]
+        LEDGER --> CONTRACT["Cross-Pod Contract: prep_evidence_contract.json"]
+        CONTRACT --> STEP5["Step 5: Recovery Manager Dispute Claim Engine"]
     end
 
-    subgraph User Experience Layer [Dual-Mode Station + Landing Page]
-        LEDGER --> BENCH_UI[Mode 1: Packing Bench Workstation]
-        LEDGER --> DISPUTES_UI[Mode 2: Disputes & Claims Defense Center]
-        OVERVIEW_UI[Standalone Marketing & Compliance Overview]
+    subgraph UX_Layer ["User Experience Layer: Dual-Mode Station & Landing Page"]
+        LEDGER --> BENCH_UI["Mode 1: Packing Bench Workstation"]
+        LEDGER --> DISPUTES_UI["Mode 2: Disputes & Claims Defense Center"]
+        OVERVIEW_UI["Standalone Marketing & Compliance Overview"]
     end
 ```
 

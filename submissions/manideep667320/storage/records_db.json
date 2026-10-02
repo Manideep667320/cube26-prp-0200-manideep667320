@@ -97,7 +97,7 @@
       "fixtures/alpha.jpg"
     ],
     "operator_id": "op_amira",
-    "captured_at": "2026-10-01T18:17:14.510646+00:00"
+    "captured_at": "2026-10-02T08:39:20.894815+00:00"
   },
   "PRP-0003": {
     "record_id": "PRP-0003",
@@ -197,7 +197,7 @@
       "fixtures/bravo.jpg"
     ],
     "operator_id": "op_amira",
-    "captured_at": "2026-10-01T18:17:14.525640+00:00"
+    "captured_at": "2026-10-02T08:39:20.900339+00:00"
   },
   "PRP-0004": {
     "record_id": "PRP-0004",
@@ -297,6 +297,6 @@
       "fixtures/prep/seam.jpg"
     ],
     "operator_id": "op_amira",
-    "captured_at": "2026-10-01T18:17:14.664620+00:00"
+    "captured_at": "2026-10-02T08:39:20.935889+00:00"
   }
 }
