@@ -17,12 +17,15 @@
 ## 1. Executive Summary & Customer Problem Statement
 
 ### The Razor-Thin Prep Center Margin Trap
+
 In third-party prep centers (3PLs) and brand-owned preparation warehouses, operators handle high volumes of inbound goods for Amazon FBA. Prep centers charge sellers between **$0.40 and $1.10 per unit** to inspect, bag, bubble-wrap, label, and box products.
 
 Between 3 and 6 weeks after inbound delivery, Amazon fulfillment centers regularly issue automated prep defect chargebacks ranging from **$0.20 to $2.00 per unit** (e.g. alleging missing suffocation warnings, unsealed polybags, or unscannable barcodes). Because prep centers historically kept no visual record of the physical condition at the moment of sealing, they have had no evidence to dispute these claims. As a consequence, prep centers routinely lose thousands of dollars every month absorbing fraudulent or erroneous Amazon inbound fees.
 
 ### The PrepFlow Solution
+
 PrepFlow is an AI-powered visual compliance and dispute defense system operating directly at the warehouse packaging bench. In under **800 milliseconds**, PrepFlow:
+
 1. Captures multi-angle camera feeds (front, back, and label angles).
 2. Executes a single-call batched multimodal VLM to ground packaging features with 2D bounding boxes.
 3. Evaluates compliance against hardcoded, authoritative Amazon Seller Central rules ([Rules 101–601](file:///c:/Users/manid/Desktop/cube26-prp-0200-manideep667320/submissions/manideep667320/agent/amazon_rules.py)).
@@ -57,29 +60,32 @@ PrepFlow is an AI-powered visual compliance and dispute defense system operating
 PrepFlow provides a dual-mode operational workstation tailored for floor operators and warehouse managers, complemented by a dedicated public overview page:
 
 ### Screen 1: High-Throughput Packing Bench (`Mode: Packing Bench`)
+
 *Built for warehouse floor operators processing units in 8–12 seconds.*
-- **Live Stage Camera:** Real-time overhead camera feed with dynamic SVG visual grounding overlays (e.g., highlighting FNSKU placement defects over seams).
-- **ASIN / SKU Profile:** Instant visibility into work orders, ASIN (`B0DUMMY964`), FNSKU (`X00DUMMY002`), and item packaging specifications.
-- **Instant Decision Banner:** High-contrast status banner (`PASS` / `FAIL` / `UNCERTAIN`) with clear physical instructions.
-- **Authoritative Amazon Rules Breakdown:** Live checklist mapped directly to Amazon Seller Central Rules 101–601.
-- **Operator Action Controls:** Single-click controls for `Next Unit (Enter)`, `Flag Defect`, `Retake Photo`, and the mandatory **Honesty Rule Operator Override** modal with supervisor authorization logging.
+* **Live Stage Camera:** Real-time overhead camera feed with dynamic SVG visual grounding overlays (e.g., highlighting FNSKU placement defects over seams).
+* **ASIN / SKU Profile:** Instant visibility into work orders, ASIN (`B0DUMMY964`), FNSKU (`X00DUMMY002`), and item packaging specifications.
+* **Instant Decision Banner:** High-contrast status banner (`PASS` / `FAIL` / `UNCERTAIN`) with clear physical instructions.
+* **Authoritative Amazon Rules Breakdown:** Live checklist mapped directly to Amazon Seller Central Rules 101–601.
+* **Operator Action Controls:** Single-click controls for `Next Unit (Enter)`, `Flag Defect`, `Retake Photo`, and the mandatory **Honesty Rule Operator Override** modal with supervisor authorization logging.
 
 ### Screen 2: Disputes & Claims Defense Center (`Mode: Disputes & Claims`)
+
 *Built for prep center owners and operations managers defending inbound revenue.*
-- **Financial Margin KPI Cards:**
-  - *Prep Revenue Protected:* Total unit revenue safeguarded against chargebacks ($0.40–$1.10/unit).
-  - *Dispute Win Rate:* 92.4% historical dispute success rate with Amazon Seller Central.
-  - *Active Disputed Fees:* Total value of chargeback claims currently in dispute.
-  - *Average Claim Resolution:* Average turnaround time for Amazon fee reversals.
-- **Active Amazon Disputes Queue:** Filterable queue displaying Amazon-flagged units, alleged defect codes ($0.20 to $2.00 fee amounts), and claim status.
-- **Automated Seller Central Dispute Dossier:** One-click generation of audit-ready dispute packages containing timestamped photos, spatial bounding box coordinates, and cryptographic verification ready for submission to Seller Central or Step 5 Recovery Manager.
+* **Financial Margin KPI Cards:**
+  * *Prep Revenue Protected:* Total unit revenue safeguarded against chargebacks ($0.40–$1.10/unit).
+  * *Dispute Win Rate:* 92.4% historical dispute success rate with Amazon Seller Central.
+  * *Active Disputed Fees:* Total value of chargeback claims currently in dispute.
+  * *Average Claim Resolution:* Average turnaround time for Amazon fee reversals.
+* **Active Amazon Disputes Queue:** Filterable queue displaying Amazon-flagged units, alleged defect codes ($0.20 to $2.00 fee amounts), and claim status.
+* **Automated Seller Central Dispute Dossier:** One-click generation of audit-ready dispute packages containing timestamped photos, spatial bounding box coordinates, and cryptographic verification ready for submission to Seller Central or Step 5 Recovery Manager.
 
 ### Standalone Marketing & Technical Inbound Overview (`/overview` or `/landing`)
+
 A separate, public-facing portal for prospective customers, executives, and auditors:
-- **Interactive Inspection Simulator:** Test multi-angle packaging scans against Amazon rules in real time.
-- **4-Stage Pipeline Breakdown:** Visual walkthrough of Ingestion &rarr; Computer Vision Grounding &rarr; Amazon Rules Aggregation &rarr; Evidence Signing.
-- **First-Class Tri-State Logic:** Deep dive into how `UNCERTAIN` prevents false rejections and eliminates false passes.
-- **Direct Station Launch:** Instant button to enter the live warehouse Packing Station.
+* **Interactive Inspection Simulator:** Test multi-angle packaging scans against Amazon rules in real time.
+* **4-Stage Pipeline Breakdown:** Visual walkthrough of Ingestion &rarr; Computer Vision Grounding &rarr; Amazon Rules Aggregation &rarr; Evidence Signing.
+* **First-Class Tri-State Logic:** Deep dive into how `UNCERTAIN` prevents false rejections and eliminates false passes.
+* **Direct Station Launch:** Instant button to enter the live warehouse Packing Station.
 
 ---
 
@@ -88,7 +94,7 @@ A separate, public-facing portal for prospective customers, executives, and audi
 PrepFlow strictly satisfies the five mandatory architectural rules:
 
 | Rule | Requirement | Implementation Module | Automated Test |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | **Rule 1: Multi-Tenant RLS** | Zero cross-tenant data leaks; PostgreSQL RLS on `org_id`; tenant-hashed image storage paths. | [`tenancy.py`](file:///c:/Users/manid/Desktop/cube26-prp-0200-manideep667320/submissions/manideep667320/agent/tenancy.py) | [`test_rule_1_tenancy_isolation`](file:///c:/Users/manid/Desktop/cube26-prp-0200-manideep667320/submissions/manideep667320/tests/test_agent.py#L14) |
 | **Rule 2: Batched VLM Invocations** | Zero per-check model calls. All 3 angles submitted in a single prompt evaluating all 6 checks concurrently ($0.0068/unit). | [`vlm_client.py`](file:///c:/Users/manid/Desktop/cube26-prp-0200-manideep667320/submissions/manideep667320/agent/vlm_client.py) | Verified in [`run_eval.py`](file:///c:/Users/manid/Desktop/cube26-prp-0200-manideep667320/submissions/manideep667320/eval/run_eval.py) |
 | **Rule 3: Zero-Delay Fail Open** | Never halt the packaging line. Model timeouts (>800ms) or API failures buffer locally and tag `status="pending_review"`. | [`fail_open.py`](file:///c:/Users/manid/Desktop/cube26-prp-0200-manideep667320/submissions/manideep667320/agent/fail_open.py) | [`test_rule_3_fail_open_architecture`](file:///c:/Users/manid/Desktop/cube26-prp-0200-manideep667320/submissions/manideep667320/tests/test_agent.py#L32) |
@@ -102,6 +108,7 @@ PrepFlow strictly satisfies the five mandatory architectural rules:
 PrepFlow was evaluated against an unseen, held-out dataset of 50 physical units ([`eval/held_out_50.json`](file:///c:/Users/manid/Desktop/cube26-prp-0200-manideep667320/submissions/manideep667320/eval/run_eval.py)), independently annotated by two warehouse compliance specialists.
 
 ### Evaluation Metrics
+
 ```text
 ============================================================
 50-UNIT HELD-OUT EVALUATION RESULTS
@@ -115,6 +122,7 @@ UNCERTAIN:       0 (0.0%)
 ```
 
 ### Critical Safety Gate: 0.0% False PASS
+
 In prep operations, a **False PASS is a catastrophic failure** because an undetected defect reaches an Amazon fulfillment center, triggering an unavoidable chargeback fee ($0.20 to $2.00) weeks later. PrepFlow achieves a **0.0% False PASS rate** by design: ambiguous or occluded features are systematically routed to `UNCERTAIN` for immediate operator repositioning.
 
 ---
@@ -177,38 +185,45 @@ PrepFlow is fully optimized for **zero-configuration Vercel deployment** without
 ## 8. Quickstart & Verification Guide
 
 ### Prerequisites
+
 - Python 3.10+
-- Node.js 18+ and npm
+* Node.js 18+ and npm
 
 ### 1. Install Backend Dependencies
+
 ```bash
 pip install -r requirements.txt
 # (or install core requirements: fastapi uvicorn pydantic pytest)
 ```
 
 ### 2. Run Automated Test Suite (5/5 Passing)
+
 ```bash
 python -m pytest submissions/manideep667320/tests/test_agent.py -v
 ```
 
 ### 3. Run Held-Out 50-Unit Evaluation Set
+
 ```bash
 python submissions/manideep667320/eval/run_eval.py
 ```
 
 ### 4. Build Production Frontend (Vite)
+
 ```bash
 npm run build
 ```
 
 ### 5. Launch Local Workstation Server
+
 ```bash
 python -m uvicorn submissions.manideep667320.web.server:app --port 8000 --host 127.0.0.1
 ```
+
 Open **`http://127.0.0.1:8000`** in your browser:
-- Packing Bench: `http://127.0.0.1:8000/`
-- Disputes & Claims Defense: `http://127.0.0.1:8000/` (click "Disputes & Claims")
-- Standalone Overview: `http://127.0.0.1:8000/overview`
+* Packing Bench: `http://127.0.0.1:8000/`
+* Disputes & Claims Defense: `http://127.0.0.1:8000/` (click "Disputes & Claims")
+* Standalone Overview: `http://127.0.0.1:8000/overview`
 
 ---
 
@@ -256,12 +271,12 @@ c:\cube26-prp-0200-manideep667320\
 
 ## 10. Submission Deliverables Checklist
 
-- [x] **Working Prep Manager (Step 2):** Real-time multi-angle packaging inspection engine.
-- [x] **Dual-Mode Station UI:** Pixel-perfect Packing Bench + Disputes & Claims Center.
-- [x] **Standalone Marketing & Compliance Overview:** Unmerged `/overview` portal.
-- [x] **All 5 Engineering Rules Satisfied:** RLS tenancy, batched VLM, fail-open, tri-state, Amazon rules.
-- [x] **5/5 Automated Unit Tests Passing:** Verified via pytest in 0.24s.
-- [x] **50-Unit Held-Out Evaluation:** 100.0% accuracy, 0.0% False PASS rate.
-- [x] **Cross-Pod Contract:** Interoperable with Step 5 Recovery Manager (`prep_evidence_contract.json`).
-- [x] **Zero-Config Vercel Deployment:** Deploys cleanly without any `vercel.json` file.
-- [x] **Comprehensive Documentation:** Up-to-date `ARCHITECTURE.md` and `README.md`.
+* [x] **Working Prep Manager (Step 2):** Real-time multi-angle packaging inspection engine.
+* [x] **Dual-Mode Station UI:** Pixel-perfect Packing Bench + Disputes & Claims Center.
+* [x] **Standalone Marketing & Compliance Overview:** Unmerged `/overview` portal.
+* [x] **All 5 Engineering Rules Satisfied:** RLS tenancy, batched VLM, fail-open, tri-state, Amazon rules.
+* [x] **5/5 Automated Unit Tests Passing:** Verified via pytest in 0.24s.
+* [x] **50-Unit Held-Out Evaluation:** 100.0% accuracy, 0.0% False PASS rate.
+* [x] **Cross-Pod Contract:** Interoperable with Step 5 Recovery Manager (`prep_evidence_contract.json`).
+* [x] **Zero-Config Vercel Deployment:** Deploys cleanly without any `vercel.json` file.
+* [x] **Comprehensive Documentation:** Up-to-date `ARCHITECTURE.md` and `README.md`.
