@@ -43,7 +43,7 @@ The following phrases are strictly banned in code comments, commit messages, and
 | ❌ "Blockchain-backed / Immutable ledger" | We use SHA-256 content hashes and PostgreSQL audit logs. Hand-waving is scored down. | ✅ "SHA-256 hashed audit log" |
 | ❌ "AI knows all packaging rules" | AI observes pixels; deterministic Python rules decide compliance. | ✅ "AI extracts observations; authoritative rules decide" |
 | ❌ "100% accurate / flawless inspection" | Vision models make errors; overclaiming damages engineering credibility. | ✅ "98.5% precision on held-out test fixtures" |
-| ❌ "It works well / works reliably" | Vague claims without empirical data fail evaluation criteria. | ✅ "Evaluated on 50 held-out units with 2-labeller agreement" |
+| ❌ "It works well / works reliably" | Vague claims without empirical data fail evaluation criteria. | ✅ "Evaluated on 50 held-out units against Amazon FBA specifications" |
 | ❌ "Low-confidence PASS" | Masking uncertainty behind a pass triggers Amazon defect fines. | ✅ "`UNCERTAIN` — targeted retake required" |
 
 ---

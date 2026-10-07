@@ -37,7 +37,7 @@ Prep Manager captures three high-speed photographs at the packing bench (Front, 
 | Metric | Target | Minimum Acceptable | Measurement Methodology |
 |---|:---:|:---:|---|
 | **Cost per Unit Inspected** | **$0.007** | ≤ $0.015 | Total multimodal token inference cost per unit (batched 3-image prompt). |
-| **False PASS Rate (Critical Safety)** | **< 1.0%** | ≤ 1.5% | Ground-truthed on held-out 50-unit eval set (2-labeller agreement). |
+| **False PASS Rate (Critical Safety)** | **< 1.0%** | ≤ 1.5% | Ground-truthed on held-out 50-unit eval set against Amazon FBA specifications. |
 | **False FAIL Rate (Rework Cost)** | **< 2.5%** | ≤ 4.0% | Percentage of compliant units incorrectly rejected by the model. |
 | **P95 Verification Latency** | **< 450 ms** | ≤ 800 ms | Time from capture submission to requirement verdict display. |
 | **Fail-Open Line Delay** | **0 ms** | 0 ms | Operator station latency when vision service is degraded or offline. |

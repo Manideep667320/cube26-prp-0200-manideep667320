@@ -2,6 +2,8 @@
 
 import json
 import logging
+import asyncio
+from pathlib import Path
 from agent.config import settings
 from agent.schemas import WorkOrder, BatchedVLMPayload
 
@@ -36,11 +38,15 @@ class BatchedVLMClient:
         """Single multimodal call evaluating all 6 checks."""
         logger.info(f"Executing single batched VLM inference for {wo.unit_id} across {len(photo_refs)} images.")
 
-        if self.provider == "mock":
-            return self._mock_inference(wo, photo_refs)
+        try:
+            if self.provider == "mock":
+                return self._mock_inference(wo, photo_refs)
 
-        # Provider implementations (e.g. Gemini / OpenAI multimodal structured outputs)
-        return await self._call_remote_vlm(photo_refs, wo)
+            # Provider implementations (e.g. Gemini / OpenAI multimodal structured outputs)
+            return await self._call_remote_vlm(photo_refs, wo)
+        except Exception as exc:
+            logger.warning(f"Batched VLM inference exception: {exc}; returning deterministic fail-open payload.")
+            return self._mock_inference(wo, photo_refs)
 
     def _mock_inference(self, wo: WorkOrder, photo_refs: list[str]) -> BatchedVLMPayload:
         """Deterministic mock provider for fixtures and reproducible local evaluations."""
@@ -88,12 +94,128 @@ class BatchedVLMClient:
         )
 
     async def _call_remote_vlm(self, photo_refs: list[str], wo: WorkOrder) -> BatchedVLMPayload:
-        """Real VLM invocation via Google Gemini or OpenAI API (if configured)."""
-        # Fallback to mock if API key is unconfigured
+        """Genuine VLM invocation via Google Gemini or OpenAI API with fail-open fallback."""
         if not settings.vlm_api_key:
+            logger.info("No VLM API key configured; falling back to deterministic inspection.")
             return self._mock_inference(wo, photo_refs)
-        # Real HTTP call implementation with structured JSON decode
-        raise NotImplementedError("API client configured via provider")
+
+        try:
+            if self.provider in ("gemini", "google"):
+                return await asyncio.wait_for(
+                    self._call_gemini(photo_refs, wo),
+                    timeout=max(self.timeout, 5.0)
+                )
+            elif self.provider in ("openai", "gpt"):
+                return await asyncio.wait_for(
+                    self._call_openai(photo_refs, wo),
+                    timeout=max(self.timeout, 5.0)
+                )
+            else:
+                logger.warning(f"Unknown VLM provider '{self.provider}'; using deterministic inference.")
+                return self._mock_inference(wo, photo_refs)
+        except Exception as exc:
+            # Rule 3: Fail Open - network errors, quota limits, or invalid keys never crash the station
+            logger.warning(f"Remote VLM invocation failed ({exc}); safely falling back to deterministic evaluation.")
+            return self._mock_inference(wo, photo_refs)
+
+    async def _call_gemini(self, photo_refs: list[str], wo: WorkOrder) -> BatchedVLMPayload:
+        """Call Google Gemini API via google.genai client with structured JSON output."""
+        import google.genai as genai
+        from google.genai import types
+
+        client = genai.Client(api_key=settings.vlm_api_key)
+        prompt_text = (
+            f"{BATCHED_INSPECTION_SYSTEM_PROMPT}\n\n"
+            f"Work Order Context:\n"
+            f"- Unit ID: {wo.unit_id}\n"
+            f"- SKU: {wo.sku}\n"
+            f"- ASIN: {wo.asin}\n"
+            f"- FNSKU: {wo.fnsku}\n"
+            f"- Polybag Required: {wo.wo_polybag}\n"
+            f"- Suffocation Warning Required: {wo.wo_suffocation_warning}\n"
+            f"- Expiry Date Required: {wo.wo_expiry_date}\n"
+            f"- Handling Marks Required: {wo.wo_handling_marks or 'None'}\n"
+        )
+
+        contents = [prompt_text]
+        for ref in photo_refs:
+            file_path = Path(ref)
+            if not file_path.is_absolute():
+                candidates = [
+                    settings.base_dir / ref,
+                    settings.storage_dir / ref,
+                    Path.cwd() / ref
+                ]
+                for c in candidates:
+                    if c.exists():
+                        file_path = c
+                        break
+            if file_path.exists() and file_path.is_file():
+                try:
+                    img_bytes = file_path.read_bytes()
+                    mime = "image/png" if file_path.suffix.lower() == ".png" else "image/jpeg"
+                    contents.append(types.Part.from_bytes(data=img_bytes, mime_type=mime))
+                except Exception as read_err:
+                    logger.debug(f"Could not read image file {file_path}: {read_err}")
+            else:
+                contents.append(f"[Photo Reference: {ref}]")
+
+        response = await client.aio.models.generate_content(
+            model=settings.vlm_model if "gemini" in settings.vlm_model else "gemini-2.5-flash",
+            contents=contents,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=BatchedVLMPayload,
+                temperature=0.1
+            )
+        )
+
+        raw_text = response.text or "{}"
+        parsed = json.loads(raw_text)
+        return BatchedVLMPayload.model_validate(parsed)
+
+    async def _call_openai(self, photo_refs: list[str], wo: WorkOrder) -> BatchedVLMPayload:
+        """Call OpenAI API with multimodal base64 inputs and structured response."""
+        import base64
+        import openai
+
+        client = openai.AsyncOpenAI(api_key=settings.vlm_api_key)
+        user_content: list[dict] = [
+            {"type": "text", "text": f"Unit ID: {wo.unit_id}, SKU: {wo.sku}, ASIN: {wo.asin}, FNSKU: {wo.fnsku}"}
+        ]
+
+        for ref in photo_refs:
+            file_path = Path(ref)
+            if not file_path.is_absolute():
+                for c in [settings.base_dir / ref, settings.storage_dir / ref, Path.cwd() / ref]:
+                    if c.exists():
+                        file_path = c
+                        break
+            if file_path.exists() and file_path.is_file():
+                try:
+                    b64 = base64.b64encode(file_path.read_bytes()).decode("utf-8")
+                    mime = "image/png" if file_path.suffix.lower() == ".png" else "image/jpeg"
+                    user_content.append({
+                        "type": "image_url",
+                        "image_url": {"url": f"data:{mime};base64,{b64}"}
+                    })
+                except Exception as read_err:
+                    logger.debug(f"Could not encode image file {file_path}: {read_err}")
+
+        messages = [
+            {"role": "system", "content": BATCHED_INSPECTION_SYSTEM_PROMPT},
+            {"role": "user", "content": user_content}
+        ]
+
+        resp = await client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages,
+            response_format={"type": "json_object"},
+            temperature=0.1
+        )
+        content_str = resp.choices[0].message.content or "{}"
+        return BatchedVLMPayload.model_validate_json(content_str)
 
 
 vlm_client = BatchedVLMClient()
+

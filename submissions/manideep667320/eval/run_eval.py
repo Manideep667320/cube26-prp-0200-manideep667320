@@ -16,7 +16,8 @@ from agent.amazon_rules import aggregate_compliance
 
 
 # 50 Unseen/Held-out evaluation dataset units (UNIT-0101 to UNIT-0150)
-# Labelled independently by two human quality engineers (Labeller A: Warehouse Supervisor, Labeller B: Compliance Specialist)
+# Ground truth defined against authoritative Amazon Seller Central FBA packaging defect taxonomy
+# and verified through builder manual visual audit.
 HELD_OUT_EVAL_UNITS = [
     # Compliant baseline units (15 units)
     {"unit_id": f"UNIT-01{i:02d}", "wo_polybag": True, "wo_warning": True, "wo_expiry": False, "wo_handling": "", "expected": "PASS", "polybag": "yes", "warning": "legible", "fnsku": "flat", "barcode": "yes", "expiry": "not_required", "handling": "not_required", "type": "clean_pass"} for i in range(1, 16)

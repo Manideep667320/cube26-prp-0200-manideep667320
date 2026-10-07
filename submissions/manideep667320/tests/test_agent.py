@@ -147,3 +147,31 @@ def test_honesty_rule_operator_override(repo):
     assert updated.operator_override is not None
     assert updated.operator_override.original_verdict == record.overall_verdict
     assert updated.operator_override.reason.startswith("Visual seam does not overlap")
+
+
+def test_rule_2_vlm_client_remote_no_not_implemented_error():
+    """Rule 2 & 3: Remote VLM providers (gemini/openai) never raise NotImplementedError and fail open."""
+    from agent.vlm_client import BatchedVLMClient
+
+    wo = WorkOrder(unit_id="UNIT-0050", org_id="org_demo_alpha")
+
+    # 1. Test Gemini provider without key (never raises NotImplementedError)
+    client_gemini = BatchedVLMClient(provider="gemini")
+    res_gemini = asyncio.run(client_gemini.inspect_unit(["fixtures/test.jpg"], wo))
+    assert isinstance(res_gemini, BatchedVLMPayload)
+    assert res_gemini.polybag_status in ["yes", "not_sealed", "missing", "uncertain", "not_required"]
+
+    # 2. Test OpenAI provider without key (never raises NotImplementedError)
+    client_openai = BatchedVLMClient(provider="openai")
+    res_openai = asyncio.run(client_openai.inspect_unit(["fixtures/test.jpg"], wo))
+    assert isinstance(res_openai, BatchedVLMPayload)
+
+    # 3. Test remote failure triggers fail open boundary
+    client_err = BatchedVLMClient(provider="gemini")
+    async def mock_network_err(*args, **kwargs):
+        raise ConnectionError("Simulated remote network partition")
+    client_err._call_gemini = mock_network_err
+    res_fail_open = asyncio.run(client_err._call_remote_vlm(["fixtures/test.jpg"], wo))
+    assert isinstance(res_fail_open, BatchedVLMPayload)
+
+

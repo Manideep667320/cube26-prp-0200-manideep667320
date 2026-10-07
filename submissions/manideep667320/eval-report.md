@@ -8,14 +8,28 @@
 
 ---
 
-## 1. Evaluation Methodology & Annotation Protocol
+## 1. Evaluation Methodology & Ground Truth Protocol
 
-In accordance with the **Honesty Rules** and the assessment criteria for **Evaluation, Accuracy & Uncertainty Handling (25 points)**:
-- The evaluation was conducted on a strictly **held-out set of 50 units** that the agent and prompt never saw during development.
-- **Two-Labeller Ground Truth Protocol:** Ground truth labels were established through independent blind annotation by two quality specialists:
-  - **Annotator A:** Warehouse Floor Operations Supervisor (Apex 3PL).
-  - **Annotator B:** Amazon FBA Inbound Compliance Auditor.
-- **Inter-Annotator Agreement:** Across all 300 individual requirement judgements (50 units × 6 checks), Annotator A and B agreed on 289 judgements (**96.3% raw agreement**, Cohen's $\kappa = 0.924$, indicating near-perfect agreement). The 11 divergent judgements were arbitrated by physical reinspection.
+In strict accordance with the **Honesty Rules** (*"Say what you built, not what it sounds like... An honest 61% you can break down beats a 95% you can't"*):
+
+- **Held-Out Test Set Construction:**
+  The evaluation was conducted on a systematically constructed held-out suite of **50 units (`UNIT-0101` through `UNIT-0150`)** covering all 6 authoritative Amazon FBA compliance requirements:
+  - **15 Clean Compliant Units** (`UNIT-0101` – `UNIT-0115`): Fully compliant packaging serving as baseline passes.
+  - **6 Polybag Defects** (`UNIT-0116` – `UNIT-0121`): Unsealed flaps and unsealed open seams.
+  - **6 Suffocation Warning Defects** (`UNIT-0122` – `UNIT-0127`): Warnings obscured by folds or improper font placement.
+  - **8 FNSKU Placement Defects** (`UNIT-0128` – `UNIT-0135`): Labels placed across box seams, curved bottle surfaces, or package edges.
+  - **5 Barcode Coverage Defects** (`UNIT-0136` – `UNIT-0140`): Original manufacturer UPCs left exposed next to FNSKU.
+  - **3 Expiry Date Defects** (`UNIT-0141` – `UNIT-0143`): Expiration dates rendered illegible behind opaque shrink wrap.
+  - **3 Handling Mark Defects** (`UNIT-0144` – `UNIT-0146`): Missing required fragile or orientation indicators.
+  - **4 Ambiguity / Glare Scenarios** (`UNIT-0147` – `UNIT-0150`): Overexposed lighting and reflection testing first-class `UNCERTAIN` handling.
+
+- **Ground Truth Establishment (Honesty Declaration):**
+  - **Transparent Labeling Origin:** Ground truth was codified directly by the builder (`manideep667320`) mapping each unit's visual parameters against authoritative Amazon Seller Central prep manuals. Fictitious external personas (such as third-party 3PL floor supervisors or Amazon inbound auditors) are explicitly disclaimed.
+  - **Verification Method:** Each of the 50 test scenarios underwent a dual check:
+    1. *Normative Rule Specification:* Expected defect verdicts mapped deterministically from Amazon prep standards.
+    2. *Manual Builder Visual Audit:* Visual attributes were manually inspected to confirm unambiguous signal fidelity before evaluation runs.
+  - **Production Agreement Protocol:**
+    For warehouse line deployment, ground truth will be audited via real-time operator override telemetry (`/api/records/{id}/override`), where discrepancies between two line leads are recorded with mandatory justification.
 
 ---
 

@@ -18,7 +18,7 @@ submissions/manideep667320/
 ├── CLAUDE.md                  ← Durable engineering constraints, non-negotiable rules, forbidden language
 ├── build-brief.md             ← Problem statement, technical strategy, and architectural decisions
 ├── build-log.md               ← Chronological engineering build log and findings
-├── eval-report.md             ← Held-out 50-unit eval results, 2-labeller agreement, FP/FN breakdown
+├── eval-report.md             ← Held-out 50-unit eval results, FBA rule taxonomy, per-check FP/FN breakdown
 ├── contract/
 │   └── prep_evidence_contract.json ← Cross-pod evidence contract for Recovery Manager
 ├── agent/                     ← Production headless agent core

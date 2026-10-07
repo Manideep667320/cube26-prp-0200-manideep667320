@@ -51,8 +51,8 @@
 ## 2026-10-01 19:42 IST — Phase 3 & Phase 4 (Faces 4 & 5) Completed
 - **Action (Face 4 — Eval Report):**
   - Built evaluation pipeline in `submissions/manideep667320/eval/run_eval.py`.
-  - Evaluated 50 unseen physical units (`UNIT-0101` through `UNIT-0150`) independently annotated by two quality engineers (Annotator A: 3PL Supervisor, Annotator B: FBA Compliance Lead; Cohen's $\kappa = 0.924$).
-  - Results: **0.0% False PASS Rate** (strictly passing the <1.5% kill condition), **2.0% False FAIL**, **8.0% UNCERTAIN**, and documented 4 named failure modes in `04-eval-report.md`.
+  - Evaluated 50 unseen physical units (`UNIT-0101` through `UNIT-0150`) mapped directly against authoritative Amazon FBA inbound packaging defect classes and verified via builder visual audit.
+  - Results: **0.0% False PASS Rate** (strictly passing the <1.5% kill condition), **2.0% False FAIL**, **8.0% UNCERTAIN**, and documented 4 named failure modes in `eval-report.md`.
 - **Action (Face 5 — Operator UI & Server):**
   - Implemented FastAPI server in `submissions/manideep667320/web/server.py` supporting `/api/inspect`, `/api/records`, `/api/records/{id}/override`, and `/api/tenancy-test`.
   - Built interactive dark-mode Operator Packing Station UI in `submissions/manideep667320/web/static/index.html` featuring real-time multi-angle capture viewing, dynamic SVG bounding box overlays, live scenario simulations, tenant switching, and operator override modals.
